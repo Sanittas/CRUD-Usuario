@@ -1,11 +1,20 @@
 package br.com.sanittas.app.service.endereco.dto;
 
-public record ListaEndereco(
-        Long id,
-        String logradouro,
-        String numero,
-        String complemento,
-        String estado,
-        String cidade
-) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@AllArgsConstructor
+@Getter
+@Setter
+public class ListaEndereco {
+
+        private Long id;
+        private String logradouro;
+        private String numero;
+        private String complemento;
+        private String estado;
+        private String cidade;
+
+
 }

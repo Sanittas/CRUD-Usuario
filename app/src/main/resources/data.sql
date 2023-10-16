@@ -1,1 +1,0 @@
-INSERT INTO USUARIO(nome,email,cpf,senha) VALUES ( 'Gabriel','ogabrielsantos@brq.com','399.567.078-48','$2a$10$0ohoKBqzOD68He2GOZ5z3.pBcAtzYhfVGAV2TNztHkn6HFdlHLLDi');

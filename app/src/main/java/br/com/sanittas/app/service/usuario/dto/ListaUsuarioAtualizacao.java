@@ -1,10 +1,17 @@
+
 package br.com.sanittas.app.service.usuario.dto;
 
-public record ListaUsuarioAtualizacao(
-        Integer id,
-        String nome,
-        String email,
-        String cpf,
-        String senha
-) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@AllArgsConstructor
+@Getter
+@Setter
+public class ListaUsuarioAtualizacao{
+    private Integer id;
+    private String nome;
+    private String email;
+    private String cpf;
+    private String senha;
 }

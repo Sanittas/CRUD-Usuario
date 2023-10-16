@@ -32,4 +32,6 @@ public class Usuario {
     private String senha;
     @OneToMany(mappedBy = "usuario",orphanRemoval = true)
     private List<Endereco> enderecos = new ArrayList<>();
+
+
 }
