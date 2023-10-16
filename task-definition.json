@@ -1,9 +1,9 @@
 {
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:921513292480:task-definition/tarefa-crud-usuarios:3",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:921513292480:task-definition/tarefa-crud-usuarios:12",
     "containerDefinitions": [
         {
             "name": "crud-usuarios",
-            "image": "921513292480.dkr.ecr.us-east-1.amazonaws.com/crud-usuarios",
+            "image": "921513292480.dkr.ecr.us-east-1.amazonaws.com/crud-usuarios-teste",
             "cpu": 0,
             "portMappings": [
                 {
@@ -25,7 +25,7 @@
     "family": "tarefa-crud-usuarios",
     "executionRoleArn": "arn:aws:iam::921513292480:role/ecsTaskExecutionRole",
     "networkMode": "bridge",
-    "revision": 3,
+    "revision": 12,
     "volumes": [],
     "status": "ACTIVE",
     "requiresAttributes": [
@@ -46,13 +46,13 @@
     "requiresCompatibilities": [
         "EC2"
     ],
-    "cpu": "1024",
-    "memory": "1024",
+    "cpu": "1843",
+    "memory": "819",
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
-    "registeredAt": "2023-10-15T02:20:40.568Z",
+    "registeredAt": "2023-10-16T02:13:54.247Z",
     "registeredBy": "arn:aws:iam::921513292480:root",
     "tags": []
 }
