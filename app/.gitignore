@@ -5,6 +5,7 @@
 
 # Arquivos de compilação
 build/
+target/
 
 # Arquivos de dependência
 .mvn/
