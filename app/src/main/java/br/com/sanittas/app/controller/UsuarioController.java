@@ -7,6 +7,7 @@ import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
 import br.com.sanittas.app.service.usuario.dto.ListaUsuario;
 import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@SecurityRequirement(name = "bearer-key")
 @RequestMapping("/usuarios")
 public class UsuarioController {
     @Autowired
