@@ -27,7 +27,7 @@ public class Usuario {
     @CPF
     private String cpf;
     //    @Pattern(regexp = "^\\(\\d{2}\\)9\\d{4}-\\d{4}$", message = "Telefone inválido")
-//    private String celular;
+    //    private String celular;
     @NotBlank
     private String senha;
     @OneToMany(mappedBy = "usuario",orphanRemoval = true)

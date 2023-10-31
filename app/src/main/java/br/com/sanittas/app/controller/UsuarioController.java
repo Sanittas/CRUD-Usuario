@@ -50,7 +50,7 @@ public class UsuarioController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping("/cadastrar/")
     public ResponseEntity<Void> cadastrar(@RequestBody @Valid UsuarioCriacaoDto dados) {
         try{
             services.cadastrar(dados);
