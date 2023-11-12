@@ -18,18 +18,35 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Objects;
 
-
+/**
+ * Filtro responsável por autenticar usuários com base no token JWT presente no cabeçalho da requisição.
+ */
 public class AutenticacaoFilter extends OncePerRequestFilter {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(AutenticacaoFilter.class);
     private final AutenticacaoService autenticacaoService;
     private final GerenciadorTokenJwt jwtTokenManager;
 
+    /**
+     * Construtor do filtro de autenticação.
+     *
+     * @param autenticacaoService Serviço de autenticação.
+     * @param jwtTokenManager     Gerenciador de tokens JWT.
+     */
     public AutenticacaoFilter(AutenticacaoService autenticacaoService, GerenciadorTokenJwt jwtTokenManager) {
         this.autenticacaoService = autenticacaoService;
         this.jwtTokenManager = jwtTokenManager;
     }
 
-
+    /**
+     * Método que executa o filtro de autenticação.
+     *
+     * @param request     A requisição HTTP.
+     * @param response    A resposta HTTP.
+     * @param filterChain A cadeia de filtros.
+     * @throws ServletException Se ocorrer um erro de servlet.
+     * @throws IOException      Se ocorrer um erro de I/O.
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String username = null;
@@ -58,6 +75,13 @@ public class AutenticacaoFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * Adiciona o nome de usuário ao contexto de segurança se o token for válido.
+     *
+     * @param request  A requisição HTTP.
+     * @param username O nome de usuário extraído do token JWT.
+     * @param jwtToken O token JWT.
+     */
     private void addUsernameInContext(HttpServletRequest request, String username, String jwtToken) {
 
         UserDetails userDetails = autenticacaoService.loadUserByUsername(username);

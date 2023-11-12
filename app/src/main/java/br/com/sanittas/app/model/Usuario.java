@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+
 import org.hibernate.validator.constraints.br.CPF;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Entidade que representa um usuário do sistema.
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,21 +21,25 @@ import java.util.List;
 @Entity(name = "Usuario")
 @Table(name = "usuario")
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Integer id; // Identificador único do usuário
+
     @NotBlank
-    private String nome;
+    private String nome; // Nome do usuário
+
     @Email
-    private String email;
+    private String email; // Endereço de e-mail do usuário
+
     @CPF
-    private String cpf;
-    //    @Pattern(regexp = "^\\(\\d{2}\\)9\\d{4}-\\d{4}$", message = "Telefone inválido")
-    //    private String celular;
+    private String cpf; // Número de CPF do usuário
+
+    // Outros campos que estão comentados
+
     @NotBlank
-    private String senha;
-    @OneToMany(mappedBy = "usuario",orphanRemoval = true)
-    private List<Endereco> enderecos = new ArrayList<>();
+    private String senha; // Senha do usuário
 
-
+    @OneToMany(mappedBy = "usuario", orphanRemoval = true)
+    private List<Endereco> enderecos = new ArrayList<>(); // Lista de endereços associados ao usuário
 }

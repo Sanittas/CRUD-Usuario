@@ -2,83 +2,121 @@ package br.com.sanittas.app.service;
 
 import br.com.sanittas.app.exception.ValidacaoException;
 import br.com.sanittas.app.model.Endereco;
+import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.EnderecoRepository;
 import br.com.sanittas.app.repository.UsuarioRepository;
 import br.com.sanittas.app.service.endereco.dto.EnderecoCriacaoDto;
 import br.com.sanittas.app.service.endereco.dto.EnderecoMapper;
 import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EnderecoServices {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnderecoServices.class);
+
     @Autowired
     private EnderecoRepository repository;
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-
     public List<ListaEndereco> listarEnderecosPorUsuario(Integer idUsuario) {
-        var usuario = usuarioRepository.findById(idUsuario);
-        List<ListaEndereco> enderecos = new ArrayList<>();
-        if (usuario.isPresent()){
-            for (Endereco endereco : usuario.get().getEnderecos()) {
-                var enderecoDto = new ListaEndereco(
-                        endereco.getId(),
-                        endereco.getLogradouro(),
-                        endereco.getNumero(),
-                        endereco.getComplemento(),
-                        endereco.getEstado(),
-                        endereco.getCidade()
-                );
-                enderecos.add(enderecoDto);
+        try {
+            LOGGER.info("Listando endereços para o usuário com ID: {}", idUsuario);
+
+            Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
+            List<ListaEndereco> enderecos = new ArrayList<>();
+
+            if (usuario.isPresent()) {
+                for (Endereco endereco : usuario.get().getEnderecos()) {
+                    var enderecoDto = new ListaEndereco(
+                            endereco.getId(),
+                            endereco.getLogradouro(),
+                            endereco.getNumero(),
+                            endereco.getComplemento(),
+                            endereco.getEstado(),
+                            endereco.getCidade()
+                    );
+                    enderecos.add(enderecoDto);
+                }
+                return enderecos;
+            } else {
+                throw new ValidacaoException("Usuário não encontrado");
             }
-            return enderecos;
+        } catch (Exception e) {
+            LOGGER.error("Erro ao listar endereços para o usuário com ID {}: {}", idUsuario, e.getMessage());
+            throw e;
         }
-        throw new ValidacaoException("Usuário não encontrado");
     }
 
-    public void cadastrarEnderecoUsuario(EnderecoCriacaoDto enderecoCriacaoDto,Integer usuario_id) {
-        var endereco = EnderecoMapper.of(enderecoCriacaoDto);
-        var usuario = usuarioRepository.findById(usuario_id);
-            endereco.setUsuario(usuario.get());
-            repository.save(endereco);
+    public void cadastrarEnderecoUsuario(EnderecoCriacaoDto enderecoCriacaoDto, Integer usuario_id) {
+        try {
+            LOGGER.info("Cadastrando endereço para o usuário com ID: {}", usuario_id);
+
+            var endereco = EnderecoMapper.of(enderecoCriacaoDto);
+            var usuario = usuarioRepository.findById(usuario_id);
+
+            if (usuario.isPresent()) {
+                endereco.setUsuario(usuario.get());
+                repository.save(endereco);
+            } else {
+                throw new ValidacaoException("Usuário não encontrado");
+            }
+        } catch (Exception e) {
+            LOGGER.error("Erro ao cadastrar endereço para o usuário com ID {}: {}", usuario_id, e.getMessage());
+            throw e;
+        }
     }
 
     public ListaEndereco atualizar(EnderecoCriacaoDto enderecoCriacaoDto, Long id) {
-        var endereco = repository.findById(id);
-        if (endereco.isPresent()){
-            endereco.get().setLogradouro(enderecoCriacaoDto.getLogradouro());
-            endereco.get().setNumero(enderecoCriacaoDto.getNumero());
-            endereco.get().setComplemento(enderecoCriacaoDto.getComplemento());
-            endereco.get().setEstado(enderecoCriacaoDto.getEstado());
-            endereco.get().setCidade(enderecoCriacaoDto.getCidade());
-            repository.save(endereco.get());
-            return new ListaEndereco(
-                    endereco.get().getId(),
-                    endereco.get().getLogradouro(),
-                    endereco.get().getNumero(),
-                    endereco.get().getComplemento(),
-                    endereco.get().getEstado(),
-                    endereco.get().getCidade()
-            );
+        try {
+            LOGGER.info("Atualizando endereço com ID: {}", id);
+
+            var endereco = repository.findById(id);
+            if (endereco.isPresent()) {
+                endereco.get().setLogradouro(enderecoCriacaoDto.getLogradouro());
+                endereco.get().setNumero(enderecoCriacaoDto.getNumero());
+                endereco.get().setComplemento(enderecoCriacaoDto.getComplemento());
+                endereco.get().setEstado(enderecoCriacaoDto.getEstado());
+                endereco.get().setCidade(enderecoCriacaoDto.getCidade());
+                repository.save(endereco.get());
+
+                return new ListaEndereco(
+                        endereco.get().getId(),
+                        endereco.get().getLogradouro(),
+                        endereco.get().getNumero(),
+                        endereco.get().getComplemento(),
+                        endereco.get().getEstado(),
+                        endereco.get().getCidade()
+                );
+            } else {
+                throw new ValidacaoException("Endereço não encontrado");
+            }
+        } catch (Exception e) {
+            LOGGER.error("Erro ao atualizar endereço com ID {}: {}", id, e.getMessage());
+            throw e;
         }
-        throw new ValidacaoException("Endereço não encontrado");
     }
-
-
 
     public void deletarEndereco(Long id) {
-        if (!repository.existsById(id)) {
-            throw new ValidacaoException("Endereço não existe!");
+        try {
+            LOGGER.info("Deletando endereço com ID: {}", id);
+
+            if (!repository.existsById(id)) {
+                throw new ValidacaoException("Endereço não existe!");
+            }
+            repository.deleteById(id);
+        } catch (Exception e) {
+            LOGGER.error("Erro ao deletar endereço com ID {}: {}", id, e.getMessage());
+            throw e;
         }
-        repository.deleteById(id);
     }
-
-
-
 }

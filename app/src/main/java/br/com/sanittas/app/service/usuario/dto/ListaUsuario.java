@@ -6,14 +6,42 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+
+/**
+ * DTO que representa as informações de usuário em uma lista.
+ */
 @AllArgsConstructor
 @Getter
 @Setter
-public class ListaUsuario{
+public class ListaUsuario {
+
+        /**
+         * Identificador único do usuário.
+         */
         private Integer id;
+
+        /**
+         * Nome do usuário.
+         */
         private String nome;
+
+        /**
+         * E-mail do usuário.
+         */
         private String email;
+
+        /**
+         * CPF do usuário.
+         */
         private String cpf;
+
+        /**
+         * Senha do usuário.
+         */
         private String senha;
+
+        /**
+         * Lista de endereços associados ao usuário.
+         */
         private List<ListaEndereco> enderecos;
 }

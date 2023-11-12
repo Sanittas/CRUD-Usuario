@@ -6,8 +6,17 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuração personalizada para o SpringDoc OpenAPI.
+ */
 @Configuration
 public class SpringDocConfiguration {
+
+    /**
+     * Cria uma instância personalizada do OpenAPI para configurar esquemas de segurança.
+     *
+     * @return Uma instância personalizada do OpenAPI.
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
@@ -16,4 +25,3 @@ public class SpringDocConfiguration {
                                 new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
     }
 }
-

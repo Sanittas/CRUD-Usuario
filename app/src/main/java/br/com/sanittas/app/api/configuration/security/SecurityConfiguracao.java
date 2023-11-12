@@ -24,6 +24,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Configuração de segurança para a aplicação Spring Boot.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -35,6 +38,7 @@ public class SecurityConfiguracao {
     private AutenticacaoEntryPoint autenticacaoEntryPoint;
 
     private static final AntPathRequestMatcher[] URLS_PERMITIDAS = {
+            // Lista de URLs permitidas sem autenticação
             new AntPathRequestMatcher("/usuarios/swagger-ui/**"),
             new AntPathRequestMatcher("/usuarios/v3/api-docs/**"),
             new AntPathRequestMatcher("/usuarios/swagger-ui.html"),
@@ -49,21 +53,27 @@ public class SecurityConfiguracao {
             new AntPathRequestMatcher("/api/public/**"),
             new AntPathRequestMatcher("/api/public/authenticate"),
             new AntPathRequestMatcher("/usuarios/login/**"),
-            new AntPathRequestMatcher("/usuarios/cadastrar/")
-
+            new AntPathRequestMatcher("/usuarios/cadastrar/**"),
+            new AntPathRequestMatcher("/usuarios/alterar-senha/**"),
+            new AntPathRequestMatcher("/usuarios/esqueci-senha/**"),
+            new AntPathRequestMatcher("/usuarios/validarToken/**")
     };
 
+    /**
+     * Configuração do filtro de segurança HTTP.
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.
-                headers()
+        http
+                .headers()
                 .frameOptions().disable()
                 .and()
                 .cors()
                 .and()
                 .csrf()
                 .disable()
-                .authorizeHttpRequests(authorize -> authorize.requestMatchers(URLS_PERMITIDAS).permitAll()
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(URLS_PERMITIDAS).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling()
@@ -72,12 +82,14 @@ public class SecurityConfiguracao {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class)
-        ;
+        http.addFilterBefore(jwtAuthenticationFilterBean(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    /**
+     * Configuração do gerenciador de autenticação.
+     */
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder authenticationManagerBuilder =
@@ -86,26 +98,41 @@ public class SecurityConfiguracao {
         return authenticationManagerBuilder.build();
     }
 
+    /**
+     * Configuração do ponto de entrada para autenticação JWT.
+     */
     @Bean
     public AutenticacaoEntryPoint jwtAuthenticationEntryPoint() {
         return new AutenticacaoEntryPoint();
     }
 
+    /**
+     * Configuração do filtro de autenticação JWT.
+     */
     @Bean
     public AutenticacaoFilter jwtAuthenticationFilterBean() {
         return new AutenticacaoFilter(autenticacaoService, jwtAuthenticationUtilBean());
     }
 
+    /**
+     * Configuração do gerenciador de token JWT.
+     */
     @Bean
     public GerenciadorTokenJwt jwtAuthenticationUtilBean() {
         return new GerenciadorTokenJwt();
     }
 
+    /**
+     * Configuração do codificador de senha.
+     */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configuração do source CORS para permitir requisições de qualquer origem.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuracao = new CorsConfiguration();
@@ -129,5 +156,4 @@ public class SecurityConfiguracao {
 
         return origem;
     }
-
 }
