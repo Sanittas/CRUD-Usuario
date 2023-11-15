@@ -72,7 +72,9 @@ public class UsuarioServices {
                 usuario.getEmail(),
                 usuario.getCpf(),
                 usuario.getSenha(),
+                usuario.getTelefone(),
                 listaEnderecos
+
         );
         listaUsuarios.add(usuarioDto);
     }
@@ -86,6 +88,7 @@ public class UsuarioServices {
                     endereco.getComplemento(),
                     endereco.getEstado(),
                     endereco.getCidade()
+
             );
             listaEnderecos.add(enderecoDto);
         }
@@ -156,7 +159,8 @@ public class UsuarioServices {
                         usuario.get().getNome(),
                         usuario.get().getEmail(),
                         usuario.get().getCpf(),
-                        usuario.get().getSenha()
+                        usuario.get().getSenha(),
+                        usuario.get().getTelefone()
                 );
 
                 repository.save(usuario.get());
@@ -210,6 +214,7 @@ public class UsuarioServices {
                 usuario.get().getEmail(),
                 usuario.get().getCpf(),
                 usuario.get().getSenha(),
+                usuario.get().getTelefone(),
                 listaEnderecos
         );
         return usuarioDto;

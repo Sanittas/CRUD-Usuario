@@ -41,6 +41,11 @@ public class ListaUsuario {
         private String senha;
 
         /**
+         * Telefone do usuário.
+         */
+        private String telefone;
+
+        /**
          * Lista de endereços associados ao usuário.
          */
         private List<ListaEndereco> enderecos;

@@ -3,6 +3,7 @@ package br.com.sanittas.app.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 import org.hibernate.validator.constraints.br.CPF;
@@ -28,6 +29,10 @@ public class Usuario {
 
     @NotBlank
     private String nome; // Nome do usuário
+
+    @Pattern(regexp = "\\d{2}\\d{5}\\d{4}", message = "O número de telefone deve estar no formato 11999999999")
+    private String telefone; // Número de telefone do usuário
+
 
     @Email
     private String email; // Endereço de e-mail do usuário

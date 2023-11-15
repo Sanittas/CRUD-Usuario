@@ -34,11 +34,13 @@ public class UsuarioCriacaoDto {
      * Número de celular do usuário (com padrão definido).
      */
     @Pattern(regexp = "^\\(\\d{2}\\)9\\d{4}-\\d{4}$", message = "Telefone inválido")
-    private String celular;
+    private String telefone;
 
     /**
      * Senha do usuário.
      */
     @NotBlank
     private String senha;
+
+
 }

@@ -36,4 +36,10 @@ public class ListaUsuarioAtualizacao {
      * Senha do usuário.
      */
     private String senha;
+
+    /**
+     * Telefone do usuário.
+     */
+
+    private String telefone;
 }

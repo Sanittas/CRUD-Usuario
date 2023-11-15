@@ -22,6 +22,7 @@ public class UsuarioMapper {
         usuario.setEmail(usuarioCriacaoDto.getEmail());
         usuario.setSenha(usuarioCriacaoDto.getSenha());
         usuario.setCpf(usuarioCriacaoDto.getCpf());
+        usuario.setTelefone(usuarioCriacaoDto.getTelefone());
 //        usuario.setCelular(usuarioCriacaoDto.getCelular());
 
         return usuario;
