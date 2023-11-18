@@ -153,6 +153,7 @@ public class UsuarioServices {
                 usuario.get().setEmail(dados.getEmail());
                 usuario.get().setCpf(dados.getCpf());
                 usuario.get().setSenha(dados.getSenha());
+                usuario.get().setTelefone(dados.getTelefone());
 
                 ListaUsuarioAtualizacao usuarioDto = new ListaUsuarioAtualizacao(
                         usuario.get().getId(),
