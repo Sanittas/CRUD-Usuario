@@ -2,24 +2,22 @@ package br.com.sanittas.app.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 
 @Component
+@Slf4j
 public class EmailServices {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmailServices.class);
 
     @Autowired
     private JavaMailSender emailSender;
 
     public void enviarEmailComToken(String email, String token) {
         try {
-            LOGGER.info("Enviando e-mail para: {}", email);
+            log.info("Enviando e-mail para: {}", email);
 
             String assunto = "Recuperação de senha";
             String conteudo = "<!DOCTYPE html>\n" +
@@ -49,10 +47,10 @@ public class EmailServices {
 
             emailSender.send(message);
 
-            LOGGER.info("E-mail enviado com sucesso.");
+            log.info("E-mail enviado com sucesso.");
 
         } catch (MessagingException e) {
-            LOGGER.error("Erro ao enviar e-mail: {}", e.getMessage());
+            log.error("Erro ao enviar e-mail: {}", e.getMessage());
             throw new RuntimeException(e.getLocalizedMessage());
         }
     }

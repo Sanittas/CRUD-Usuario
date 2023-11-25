@@ -1,7 +1,6 @@
 package br.com.sanittas.app.service;
 
 import br.com.sanittas.app.api.configuration.security.jwt.GerenciadorTokenJwt;
-import br.com.sanittas.app.exception.ValidacaoException;
 import br.com.sanittas.app.model.Endereco;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.UsuarioRepository;
@@ -10,9 +9,9 @@ import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
 import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
 import br.com.sanittas.app.service.usuario.dto.*;
 import lombok.SneakyThrows;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +29,7 @@ import java.time.Instant;
 import java.util.*;
 
 @Service
+@Slf4j
 public class UsuarioServices {
 
     @Autowired
@@ -43,11 +43,10 @@ public class UsuarioServices {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-    private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioServices.class);
 
     public List<ListaUsuario> listarUsuarios() {
         try {
-            LOGGER.info("Listando usuários");
+            log.info("Listando usuários");
 
             var usuarios = repository.findAll();
             List<ListaUsuario> listaUsuarios = new ArrayList<>();
@@ -60,7 +59,7 @@ public class UsuarioServices {
 
             return listaUsuarios;
         } catch (Exception e) {
-            LOGGER.error("Erro ao listar usuários: {}", e.getMessage());
+            log.error("Erro ao listar usuários: {}", e.getMessage());
             throw e;
         }
     }
@@ -96,15 +95,17 @@ public class UsuarioServices {
 
     public void cadastrar(UsuarioCriacaoDto usuarioCriacaoDto) {
         try {
-            LOGGER.info("Cadastrando novo usuário");
+            log.info("Cadastrando novo usuário");
 
             final Usuario novoUsuario = UsuarioMapper.of(usuarioCriacaoDto);
 
             if (repository.existsByEmail(novoUsuario.getEmail())) {
-                throw new ValidacaoException("Email já cadastrado!");
+                log.error("Email já cadastrado!");
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
             }
             if (repository.existsByCpf(novoUsuario.getCpf())) {
-                throw new ValidacaoException("CPF já cadastrado!");
+                log.error("CPF já cadastrado!");
+                throw new ResponseStatusException(HttpStatus.CONFLICT);
             }
 
             String senhaCriptografada = passwordEncoder.encode(novoUsuario.getSenha());
@@ -112,14 +113,14 @@ public class UsuarioServices {
 
             repository.save(novoUsuario);
         } catch (Exception e) {
-            LOGGER.error("Erro ao cadastrar usuário: {}", e.getMessage());
-            throw e;
+            log.error("Erro ao cadastrar usuário: {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
         try {
-            LOGGER.info("Autenticando usuário");
+            log.info("Autenticando usuário");
 
             final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
                     usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
@@ -137,14 +138,14 @@ public class UsuarioServices {
 
             return UsuarioMapper.of(usuarioAutenticado, jwtToken);
         } catch (Exception e) {
-            LOGGER.error("Erro ao autenticar usuário: {}", e.getMessage());
+            log.error("Erro ao autenticar usuário: {}", e.getMessage());
             throw e;
         }
     }
 
     public ListaUsuarioAtualizacao atualizar(Integer id, Usuario dados) {
         try {
-            LOGGER.info("Atualizando usuário com ID: {}", id);
+            log.info("Atualizando usuário com ID: {}", id);
 
             var usuario = repository.findById(id);
 
@@ -169,33 +170,33 @@ public class UsuarioServices {
             }
             return null;
         } catch (Exception e) {
-            LOGGER.error("Erro ao atualizar usuário com ID {}: {}", id, e.getMessage());
+            log.error("Erro ao atualizar usuário com ID {}: {}", id, e.getMessage());
             throw e;
         }
     }
 
     public void deletar(Integer id) {
         try {
-            LOGGER.info("Deletando usuário com ID: {}", id);
+            log.info("Deletando usuário com ID: {}", id);
 
             if (!repository.existsById(id)) {
-                throw new ValidacaoException("Usuário não existe!");
+                log.error("Usuário com ID {} não encontrado", id);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             repository.deleteById(id);
         } catch (Exception e) {
-            LOGGER.error("Erro ao deletar usuário com ID {}: {}", id, e.getMessage());
+            log.error("Erro ao deletar usuário com ID {}: {}", id, e.getMessage());
             throw e;
         }
     }
 
     public ListaUsuario buscar(Integer id) {
         try {
-            LOGGER.info("Buscando usuário com ID: {}", id);
-
+            log.info("Buscando usuário com ID: {}", id);
             var usuario = repository.findById(id);
-
             if (usuario.isEmpty()) {
-                throw new ValidacaoException("Usuário não existe!");
+                log.error("Usuário com ID {} não encontrado", id);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
 
             List<ListaEndereco> listaEnderecos = new ArrayList<>();
@@ -203,7 +204,7 @@ public class UsuarioServices {
             ListaUsuario usuarioDto = criarDtoUsuario(usuario, listaEnderecos);
             return usuarioDto;
         } catch (Exception e) {
-            LOGGER.error("Erro ao buscar usuário com ID {}: {}", id, e.getMessage());
+            log.error("Erro ao buscar usuário com ID {}: {}", id, e.getMessage());
             throw e;
         }
     }
@@ -224,7 +225,7 @@ public class UsuarioServices {
     @SneakyThrows
     public String generateToken(String email) {
         try {
-            LOGGER.info("Gerando token para o email: {}", email);
+            log.info("Gerando token para o email: {}", email);
 
             Usuario usuario = repository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
@@ -234,7 +235,7 @@ public class UsuarioServices {
 
             return token.getKey();
         } catch (Exception e) {
-            LOGGER.error("Erro ao gerar token: {}", e.getMessage());
+            log.error("Erro ao gerar token: {}", e.getMessage());
             throw e;
         }
     }
@@ -242,7 +243,7 @@ public class UsuarioServices {
     @SneakyThrows
     public void validarToken(String token) {
         try {
-            LOGGER.info("Validando token");
+            log.info("Validando token");
 
             PasswordTokenPublicData publicData = readPublicData(token);
 
@@ -250,7 +251,7 @@ public class UsuarioServices {
                 throw new RuntimeException("Token expirado");
             }
         } catch (Exception e) {
-            LOGGER.error("Erro ao validar token: {}", e.getMessage());
+            log.error("Erro ao validar token: {}", e.getMessage());
             throw e;
         }
     }
@@ -258,7 +259,7 @@ public class UsuarioServices {
     @SneakyThrows
     public void alterarSenha(NovaSenhaDto novaSenhaDto) {
         try {
-            LOGGER.info("Alterando senha com token");
+            log.info("Alterando senha com token");
 
             PasswordTokenPublicData publicData = readPublicData(novaSenhaDto.getToken());
 
@@ -275,7 +276,7 @@ public class UsuarioServices {
             usuario.setSenha(this.passwordEncoder.encode(novaSenhaDto.getNovaSenha()));
             repository.save(usuario);
         } catch (Exception e) {
-            LOGGER.error("Erro ao alterar senha: {}", e.getMessage());
+            log.error("Erro ao alterar senha: {}", e.getMessage());
             throw e;
         }
     }

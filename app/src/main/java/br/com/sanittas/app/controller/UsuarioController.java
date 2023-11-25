@@ -1,6 +1,5 @@
 package br.com.sanittas.app.controller;
 
-import br.com.sanittas.app.exception.ValidacaoException;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.service.EmailServices;
 import br.com.sanittas.app.service.UsuarioServices;
@@ -15,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -89,10 +89,8 @@ public class UsuarioController {
         try {
             services.cadastrar(dados);
             return ResponseEntity.status(201).build(); // Criado com sucesso
-        } catch (ValidacaoException e) {
-            return ResponseEntity.status(409).build(); // Conflito, dados já existem
-        } catch (Exception e) {
-            return ResponseEntity.status(400).build(); // Requisição inválida
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode());
         }
     }
 

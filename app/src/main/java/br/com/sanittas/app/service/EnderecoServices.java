@@ -1,6 +1,5 @@
 package br.com.sanittas.app.service;
 
-import br.com.sanittas.app.exception.ValidacaoException;
 import br.com.sanittas.app.model.Endereco;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.EnderecoRepository;
@@ -8,19 +7,21 @@ import br.com.sanittas.app.repository.UsuarioRepository;
 import br.com.sanittas.app.service.endereco.dto.EnderecoCriacaoDto;
 import br.com.sanittas.app.service.endereco.dto.EnderecoMapper;
 import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class EnderecoServices {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EnderecoServices.class);
 
     @Autowired
     private EnderecoRepository repository;
@@ -30,7 +31,7 @@ public class EnderecoServices {
 
     public List<ListaEndereco> listarEnderecosPorUsuario(Integer idUsuario) {
         try {
-            LOGGER.info("Listando endereços para o usuário com ID: {}", idUsuario);
+            log.info("Listando endereços para o usuário com ID: {}", idUsuario);
 
             Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
             List<ListaEndereco> enderecos = new ArrayList<>();
@@ -49,17 +50,18 @@ public class EnderecoServices {
                 }
                 return enderecos;
             } else {
-                throw new ValidacaoException("Usuário não encontrado");
+                log.error("Usuário com ID {} não encontrado", idUsuario);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            LOGGER.error("Erro ao listar endereços para o usuário com ID {}: {}", idUsuario, e.getMessage());
+            log.error("Erro ao listar endereços para o usuário com ID {}: {}", idUsuario, e.getMessage());
             throw e;
         }
     }
 
     public void cadastrarEnderecoUsuario(EnderecoCriacaoDto enderecoCriacaoDto, Integer usuario_id) {
         try {
-            LOGGER.info("Cadastrando endereço para o usuário com ID: {}", usuario_id);
+            log.info("Cadastrando endereço para o usuário com ID: {}", usuario_id);
 
             var endereco = EnderecoMapper.of(enderecoCriacaoDto);
             var usuario = usuarioRepository.findById(usuario_id);
@@ -68,18 +70,18 @@ public class EnderecoServices {
                 endereco.setUsuario(usuario.get());
                 repository.save(endereco);
             } else {
-                throw new ValidacaoException("Usuário não encontrado");
+                log.error("Usuário com ID {} não encontrado", usuario_id);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            LOGGER.error("Erro ao cadastrar endereço para o usuário com ID {}: {}", usuario_id, e.getMessage());
-            throw e;
+            log.error("Erro ao cadastrar endereço para o usuário com ID {}: {}", usuario_id, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
     public ListaEndereco atualizar(EnderecoCriacaoDto enderecoCriacaoDto, Long id) {
         try {
-            LOGGER.info("Atualizando endereço com ID: {}", id);
-
+            log.info("Atualizando endereço com ID: {}", id);
             var endereco = repository.findById(id);
             if (endereco.isPresent()) {
                 endereco.get().setLogradouro(enderecoCriacaoDto.getLogradouro());
@@ -98,25 +100,27 @@ public class EnderecoServices {
                         endereco.get().getCidade()
                 );
             } else {
-                throw new ValidacaoException("Endereço não encontrado");
+                log.error("Endereço com ID {} não encontrado", id);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            LOGGER.error("Erro ao atualizar endereço com ID {}: {}", id, e.getMessage());
-            throw e;
+            log.error("Erro ao atualizar endereço com ID {}: {}", id, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
     public void deletarEndereco(Long id) {
         try {
-            LOGGER.info("Deletando endereço com ID: {}", id);
+            log.info("Deletando endereço com ID: {}", id);
 
             if (!repository.existsById(id)) {
-                throw new ValidacaoException("Endereço não existe!");
+                log.error("Endereço com ID {} não encontrado", id);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             repository.deleteById(id);
         } catch (Exception e) {
-            LOGGER.error("Erro ao deletar endereço com ID {}: {}", id, e.getMessage());
-            throw e;
+            log.error("Erro ao deletar endereço com ID {}: {}", id, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 }
