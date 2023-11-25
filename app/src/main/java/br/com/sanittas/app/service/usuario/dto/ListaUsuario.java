@@ -3,6 +3,7 @@ package br.com.sanittas.app.service.usuario.dto;
 import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * DTO que representa as informações de usuário em uma lista.
  */
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class ListaUsuario {

@@ -4,6 +4,7 @@ import br.com.sanittas.app.service.EnderecoServices;
 import br.com.sanittas.app.service.endereco.dto.EnderecoCriacaoDto;
 import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @SecurityRequirement(name = "bearer-key") // Requisito de segurança para autenticação JWT
 @RequestMapping("/enderecos")
+@Setter
 public class EnderecoController {
 
     @Autowired

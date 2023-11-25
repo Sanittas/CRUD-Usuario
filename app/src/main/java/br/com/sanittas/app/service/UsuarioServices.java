@@ -8,6 +8,7 @@ import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
 import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
 import br.com.sanittas.app.service.usuario.dto.*;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import java.util.*;
 
 @Service
 @Slf4j
+@AllArgsConstructor
 public class UsuarioServices {
 
     @Autowired
@@ -94,7 +96,6 @@ public class UsuarioServices {
     }
 
     public void cadastrar(UsuarioCriacaoDto usuarioCriacaoDto) {
-        try {
             log.info("Cadastrando novo usuário");
 
             final Usuario novoUsuario = UsuarioMapper.of(usuarioCriacaoDto);
@@ -112,10 +113,6 @@ public class UsuarioServices {
             novoUsuario.setSenha(senhaCriptografada);
 
             repository.save(novoUsuario);
-        } catch (Exception e) {
-            log.error("Erro ao cadastrar usuário: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
     }
 
     public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {

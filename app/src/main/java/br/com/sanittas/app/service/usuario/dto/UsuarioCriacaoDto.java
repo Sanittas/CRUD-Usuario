@@ -3,13 +3,17 @@ package br.com.sanittas.app.service.usuario.dto;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.br.CPF;
 
 /**
  * DTO para criação de novos usuários.
  */
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UsuarioCriacaoDto {
 
     /**
