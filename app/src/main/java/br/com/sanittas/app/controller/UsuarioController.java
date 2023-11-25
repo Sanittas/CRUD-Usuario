@@ -106,8 +106,8 @@ public class UsuarioController {
         try {
             var usuario = services.atualizar(id, dados);
             return ResponseEntity.status(200).body(usuario);
-        } catch (ValidacaoException e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode());
         }
     }
 
