@@ -31,7 +31,7 @@ public class Usuario {
     private String email; // Endereço de e-mail do usuário
     @CPF
     private String cpf; // Número de CPF do usuário
-    @NotBlank @Size(min = 8, max = 20)
+    @NotBlank
     private String senha; // Senha do usuário
     @OneToMany(mappedBy = "usuario", orphanRemoval = true)
     private List<Endereco> enderecos = new ArrayList<>(); // Lista de endereços associados ao usuário
