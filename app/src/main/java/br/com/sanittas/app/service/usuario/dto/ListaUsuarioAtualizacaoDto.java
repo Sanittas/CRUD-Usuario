@@ -12,7 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ListaUsuarioAtualizacao {
+public class ListaUsuarioAtualizacaoDto {
 
     /**
      * Identificador único do usuário.

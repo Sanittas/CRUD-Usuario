@@ -12,9 +12,6 @@ import org.hibernate.validator.constraints.br.CPF;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entidade que representa um usuário do sistema.
- */
 @Getter
 @Setter
 @NoArgsConstructor

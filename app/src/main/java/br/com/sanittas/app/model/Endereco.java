@@ -5,9 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Entidade que representa um endereço associado a um usuário.
- */
 @Getter
 @Setter
 @Entity(name="Endereco")

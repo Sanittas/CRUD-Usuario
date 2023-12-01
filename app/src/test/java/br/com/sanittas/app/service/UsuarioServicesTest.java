@@ -3,12 +3,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import br.com.sanittas.app.api.configuration.security.jwt.GerenciadorTokenJwt;
-import br.com.sanittas.app.model.Endereco;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.UsuarioRepository;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
-import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
 import br.com.sanittas.app.service.usuario.dto.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -56,7 +53,7 @@ class UsuarioServicesTest {
         when(usuarioRepository.findAll()).thenReturn(usuarios);
 
         // Act
-        List<ListaUsuario> listaUsuarios = usuarioServices.listarUsuarios();
+        List<ListaUsuarioDto> listaUsuarios = usuarioServices.listarUsuarios();
 
         // Assert
         assertNotNull(listaUsuarios);

@@ -5,8 +5,8 @@ import br.com.sanittas.app.service.EmailServices;
 import br.com.sanittas.app.service.UsuarioServices;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
-import br.com.sanittas.app.service.usuario.dto.ListaUsuario;
-import br.com.sanittas.app.service.usuario.dto.ListaUsuarioAtualizacao;
+import br.com.sanittas.app.service.usuario.dto.ListaUsuarioDto;
+import br.com.sanittas.app.service.usuario.dto.ListaUsuarioAtualizacaoDto;
 import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
 import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,10 +56,10 @@ class UsuarioControllerTest {
 
     @Test
     void testListar() {
-        List<ListaUsuario> listaUsuarios = Collections.singletonList(new ListaUsuario());
+        List<ListaUsuarioDto> listaUsuarios = Collections.singletonList(new ListaUsuarioDto());
         when(usuarioServices.listarUsuarios()).thenReturn(listaUsuarios);
 
-        ResponseEntity<List<ListaUsuario>> response = usuarioController.listar();
+        ResponseEntity<List<ListaUsuarioDto>> response = usuarioController.listar();
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(listaUsuarios, response.getBody());
@@ -68,7 +68,7 @@ class UsuarioControllerTest {
     @Test
     void testBuscar() {
         Integer userId = 1;
-        ListaUsuario usuario = new ListaUsuario();
+        ListaUsuarioDto usuario = new ListaUsuarioDto();
         when(usuarioServices.buscar(userId)).thenReturn(usuario);
 
         ResponseEntity<?> response = usuarioController.buscar(userId);
@@ -89,7 +89,7 @@ class UsuarioControllerTest {
     @Test
     void testAtualizar() {
         Integer userId = 1;
-        ListaUsuarioAtualizacao usuario = new ListaUsuarioAtualizacao();
+        ListaUsuarioAtualizacaoDto usuario = new ListaUsuarioAtualizacaoDto();
         when(usuarioServices.atualizar(eq(userId), any(Usuario.class))).thenReturn(usuario);
 
         ResponseEntity<?> response = usuarioController.atualizar(userId, new Usuario());

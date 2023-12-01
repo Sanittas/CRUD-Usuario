@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ListaUsuario {
+public class ListaUsuarioDto {
 
         /**
          * Identificador único do usuário.

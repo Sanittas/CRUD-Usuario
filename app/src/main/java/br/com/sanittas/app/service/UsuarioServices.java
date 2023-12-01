@@ -46,12 +46,11 @@ public class UsuarioServices {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public List<ListaUsuario> listarUsuarios() {
-        try {
+    public List<ListaUsuarioDto> listarUsuarios() {
             log.info("Listando usuários");
 
             var usuarios = repository.findAll();
-            List<ListaUsuario> listaUsuarios = new ArrayList<>();
+            List<ListaUsuarioDto> listaUsuarios = new ArrayList<>();
 
             for (Usuario usuario : usuarios) {
                 List<ListaEndereco> listaEnderecos = new ArrayList<>();
@@ -60,14 +59,10 @@ public class UsuarioServices {
             }
 
             return listaUsuarios;
-        } catch (Exception e) {
-            log.error("Erro ao listar usuários: {}", e.getMessage());
-            throw e;
-        }
     }
 
-    private static void criarDtoUsuarios(Usuario usuario, List<ListaEndereco> listaEnderecos, List<ListaUsuario> listaUsuarios) {
-        var usuarioDto = new ListaUsuario(
+    private static void criarDtoUsuarios(Usuario usuario, List<ListaEndereco> listaEnderecos, List<ListaUsuarioDto> listaUsuarios) {
+        var usuarioDto = new ListaUsuarioDto(
                 usuario.getId(),
                 usuario.getNome(),
                 usuario.getEmail(),
@@ -134,14 +129,13 @@ public class UsuarioServices {
             final String jwtToken = gerenciadorTokenJwt.generateToken(authentication);
 
             return UsuarioMapper.of(usuarioAutenticado, jwtToken);
-        } catch (Exception e) {
+        } catch (ResponseStatusException e) {
             log.error("Erro ao autenticar usuário: {}", e.getMessage());
-            throw e;
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
     }
 
-    public ListaUsuarioAtualizacao atualizar(Integer id, Usuario dados) {
-        try {
+    public ListaUsuarioAtualizacaoDto atualizar(Integer id, Usuario dados) {
             log.info("Atualizando usuário com ID: {}", id);
 
             var usuario = repository.findById(id);
@@ -153,7 +147,7 @@ public class UsuarioServices {
                 usuario.get().setSenha(dados.getSenha());
                 usuario.get().setTelefone(dados.getTelefone());
 
-                ListaUsuarioAtualizacao usuarioDto = new ListaUsuarioAtualizacao(
+                ListaUsuarioAtualizacaoDto usuarioDto = new ListaUsuarioAtualizacaoDto(
                         usuario.get().getId(),
                         usuario.get().getNome(),
                         usuario.get().getEmail(),
@@ -166,14 +160,9 @@ public class UsuarioServices {
                 return usuarioDto;
             }
             return null;
-        } catch (Exception e) {
-            log.error("Erro ao atualizar usuário com ID {}: {}", id, e.getMessage());
-            throw e;
-        }
     }
 
     public void deletar(Integer id) {
-        try {
             log.info("Deletando usuário com ID: {}", id);
 
             if (!repository.existsById(id)) {
@@ -181,33 +170,22 @@ public class UsuarioServices {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
             repository.deleteById(id);
-        } catch (Exception e) {
-            log.error("Erro ao deletar usuário com ID {}: {}", id, e.getMessage());
-            throw e;
-        }
     }
 
-    public ListaUsuario buscar(Integer id) {
-        try {
+    public ListaUsuarioDto buscar(Integer id) {
             log.info("Buscando usuário com ID: {}", id);
             var usuario = repository.findById(id);
             if (usuario.isEmpty()) {
                 log.error("Usuário com ID {} não encontrado", id);
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
-
             List<ListaEndereco> listaEnderecos = new ArrayList<>();
             criarDtoEndereco(usuario.get(), listaEnderecos);
-            ListaUsuario usuarioDto = criarDtoUsuario(usuario, listaEnderecos);
-            return usuarioDto;
-        } catch (Exception e) {
-            log.error("Erro ao buscar usuário com ID {}: {}", id, e.getMessage());
-            throw e;
-        }
+        return criarDtoUsuario(usuario, listaEnderecos);
     }
 
-    private static ListaUsuario criarDtoUsuario(Optional<Usuario> usuario, List<ListaEndereco> listaEnderecos) {
-        ListaUsuario usuarioDto = new ListaUsuario(
+    private static ListaUsuarioDto criarDtoUsuario(Optional<Usuario> usuario, List<ListaEndereco> listaEnderecos) {
+        ListaUsuarioDto usuarioDto = new ListaUsuarioDto(
                 usuario.get().getId(),
                 usuario.get().getNome(),
                 usuario.get().getEmail(),
@@ -219,63 +197,54 @@ public class UsuarioServices {
         return usuarioDto;
     }
 
-    @SneakyThrows
     public String generateToken(String email) {
-        try {
             log.info("Gerando token para o email: {}", email);
 
             Usuario usuario = repository.findByEmail(email)
-                    .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
-
-            KeyBasedPersistenceTokenService tokenService = getInstanceFor(usuario);
-            Token token = tokenService.allocateToken(usuario.getEmail());
-
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+            try {
+                KeyBasedPersistenceTokenService tokenService = getInstanceFor(usuario);
+                Token token = tokenService.allocateToken(usuario.getEmail());
             return token.getKey();
-        } catch (Exception e) {
-            log.error("Erro ao gerar token: {}", e.getMessage());
-            throw e;
-        }
+            }catch (Exception e) {
+                log.error("Erro ao gerar token", e);
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
     }
 
-    @SneakyThrows
     public void validarToken(String token) {
-        try {
+
             log.info("Validando token");
 
             PasswordTokenPublicData publicData = readPublicData(token);
 
             if (isExpired(publicData)) {
-                throw new RuntimeException("Token expirado");
+                log.error("Token expirado");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
-        } catch (Exception e) {
-            log.error("Erro ao validar token: {}", e.getMessage());
-            throw e;
-        }
     }
 
-    @SneakyThrows
     public void alterarSenha(NovaSenhaDto novaSenhaDto) {
-        try {
             log.info("Alterando senha com token");
 
             PasswordTokenPublicData publicData = readPublicData(novaSenhaDto.getToken());
 
             if (isExpired(publicData)) {
-                throw new RuntimeException("Token expirado");
+                log.error("Token expirado");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
             }
-
             Usuario usuario = repository.findByEmail(publicData.getEmail())
                     .orElseThrow(RuntimeException::new);
-
+            try{
             KeyBasedPersistenceTokenService tokenService = this.getInstanceFor(usuario);
             tokenService.verifyToken(novaSenhaDto.getToken());
+            }catch (Exception e){
+                log.error("Token inválido");
+                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            }
 
             usuario.setSenha(this.passwordEncoder.encode(novaSenhaDto.getNovaSenha()));
             repository.save(usuario);
-        } catch (Exception e) {
-            log.error("Erro ao alterar senha: {}", e.getMessage());
-            throw e;
-        }
     }
 
     private boolean isExpired(PasswordTokenPublicData publicData) {

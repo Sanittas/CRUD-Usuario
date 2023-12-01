@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controlador para operações relacionadas a endereços.
- */
 @RestController
 @SecurityRequirement(name = "bearer-key") // Requisito de segurança para autenticação JWT
 @RequestMapping("/enderecos")

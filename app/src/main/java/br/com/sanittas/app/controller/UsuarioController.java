@@ -5,7 +5,7 @@ import br.com.sanittas.app.service.EmailServices;
 import br.com.sanittas.app.service.UsuarioServices;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
-import br.com.sanittas.app.service.usuario.dto.ListaUsuario;
+import br.com.sanittas.app.service.usuario.dto.ListaUsuarioDto;
 import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
 import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -18,9 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-/**
- * Controlador para operações relacionadas a usuários.
- */
 @RestController
 @SecurityRequirement(name = "bearer-key") // Requisito de segurança para autenticação JWT
 @RequestMapping("/usuarios")
@@ -50,7 +47,7 @@ public class UsuarioController {
      * @return Uma ResponseEntity contendo a lista de usuários ou uma resposta vazia.
      */
     @GetMapping("/")
-    public ResponseEntity<List<ListaUsuario>> listar() {
+    public ResponseEntity<List<ListaUsuarioDto>> listar() {
         try {
             var response = services.listarUsuarios();
             if (!response.isEmpty()) {
@@ -69,12 +66,12 @@ public class UsuarioController {
      * @return Uma ResponseEntity contendo o usuário encontrado ou uma resposta de falha.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<?> buscar(@PathVariable Integer id) {
+    public ResponseEntity<ListaUsuarioDto> buscar(@PathVariable Integer id) {
         try {
             var usuario = services.buscar(id);
             return ResponseEntity.status(200).body(usuario);
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getMessage());
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode());
         }
     }
 
