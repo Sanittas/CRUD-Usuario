@@ -5,7 +5,6 @@ import br.com.sanittas.app.service.EmailServices;
 import br.com.sanittas.app.service.UsuarioServices;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
-import br.com.sanittas.app.service.usuario.dto.ListaUsuarioDto;
 import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
 import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -47,7 +46,7 @@ public class UsuarioController {
      * @return Uma ResponseEntity contendo a lista de usuários ou uma resposta vazia.
      */
     @GetMapping("/")
-    public ResponseEntity<List<ListaUsuarioDto>> listar() {
+    public ResponseEntity<List<Usuario>> listar() {
         try {
             var response = services.listarUsuarios();
             if (!response.isEmpty()) {
@@ -66,9 +65,9 @@ public class UsuarioController {
      * @return Uma ResponseEntity contendo o usuário encontrado ou uma resposta de falha.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<ListaUsuarioDto> buscar(@PathVariable Integer id) {
+    public ResponseEntity<Usuario> buscar(@PathVariable Integer id) {
         try {
-            var usuario = services.buscar(id);
+            Usuario usuario = services.buscar(id);
             return ResponseEntity.status(200).body(usuario);
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode());
@@ -82,10 +81,10 @@ public class UsuarioController {
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
     @PostMapping("/cadastrar/")
-    public ResponseEntity<Void> cadastrar(@RequestBody @Valid UsuarioCriacaoDto dados) {
+    public ResponseEntity<Usuario> cadastrar(@RequestBody @Valid UsuarioCriacaoDto dados) {
         try {
-            services.cadastrar(dados);
-            return ResponseEntity.status(201).build(); // Criado com sucesso
+            Usuario response = services.cadastrar(dados);
+            return ResponseEntity.status(201).body(response); // Criado com sucesso
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode());
         }
@@ -99,7 +98,7 @@ public class UsuarioController {
      * @return Uma ResponseEntity contendo o usuário atualizado ou uma resposta de falha.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Integer id, @RequestBody @Valid Usuario dados) {
+    public ResponseEntity<Usuario> atualizar(@PathVariable Integer id, @RequestBody @Valid Usuario dados) {
         try {
             var usuario = services.atualizar(id, dados);
             return ResponseEntity.status(200).body(usuario);
@@ -115,14 +114,14 @@ public class UsuarioController {
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
     @PostMapping("/esqueci-senha")
-    public ResponseEntity<?> esqueciASenha(@RequestParam String email) {
+    public ResponseEntity<Void> esqueciASenha(@RequestParam String email) {
         try {
             String token = services.generateToken(email);
             emailServices.enviarEmailComToken(email, token);
             return ResponseEntity.status(200).build();
-        } catch (Exception e) {
+        } catch (ResponseStatusException e) {
             log.info(e.getLocalizedMessage());
-            return ResponseEntity.status(400).body(e.getLocalizedMessage());
+            throw new ResponseStatusException(e.getStatusCode());
         }
     }
 
@@ -133,12 +132,12 @@ public class UsuarioController {
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
     @GetMapping("/validarToken/{token}")
-    public ResponseEntity<?> validarToken(@PathVariable String token) {
+    public ResponseEntity<Void> validarToken(@PathVariable String token) {
         try {
             services.validarToken(token);
             return ResponseEntity.status(200).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getLocalizedMessage());
+        } catch (ResponseStatusException e) {
+            throw new  ResponseStatusException(e.getStatusCode());
         }
     }
 
@@ -149,14 +148,12 @@ public class UsuarioController {
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
     @PutMapping("/alterar-senha")
-    public ResponseEntity<?> alterarSenha(@RequestBody @Valid NovaSenhaDto novaSenhaDto) {
+    public ResponseEntity<Void> alterarSenha(@RequestBody @Valid NovaSenhaDto novaSenhaDto) {
         try {
             services.alterarSenha(novaSenhaDto);
             return ResponseEntity.status(200).build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(409).build(); // Conflito, token inválido
-        } catch (Exception e) {
-            return ResponseEntity.status(400).body(e.getLocalizedMessage());
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode());
         }
     }
 
@@ -167,12 +164,13 @@ public class UsuarioController {
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deletar(@PathVariable Integer id) {
+    public ResponseEntity<Void> deletar(@PathVariable Integer id) {
         try {
             services.deletar(id);
             return ResponseEntity.status(200).build();
-        } catch (Exception e) {
-            return ResponseEntity.status(404).build(); // Não encontrado
+        } catch (ResponseStatusException e) {
+            log.error("Erro ao deletar usuário: " + e.getMessage());
+            throw new ResponseStatusException(e.getStatusCode());
         }
     }
 }

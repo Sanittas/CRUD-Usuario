@@ -5,7 +5,6 @@ import br.com.sanittas.app.service.EmailServices;
 import br.com.sanittas.app.service.UsuarioServices;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
-import br.com.sanittas.app.service.usuario.dto.ListaUsuarioDto;
 import br.com.sanittas.app.service.usuario.dto.ListaUsuarioAtualizacaoDto;
 import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
 import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
@@ -56,10 +55,10 @@ class UsuarioControllerTest {
 
     @Test
     void testListar() {
-        List<ListaUsuarioDto> listaUsuarios = Collections.singletonList(new ListaUsuarioDto());
+        List<Usuario> listaUsuarios = Collections.singletonList(new Usuario());
         when(usuarioServices.listarUsuarios()).thenReturn(listaUsuarios);
 
-        ResponseEntity<List<ListaUsuarioDto>> response = usuarioController.listar();
+        ResponseEntity<List<Usuario>> response = usuarioController.listar();
 
         assertEquals(200, response.getStatusCodeValue());
         assertEquals(listaUsuarios, response.getBody());
@@ -68,7 +67,7 @@ class UsuarioControllerTest {
     @Test
     void testBuscar() {
         Integer userId = 1;
-        ListaUsuarioDto usuario = new ListaUsuarioDto();
+        Usuario usuario = new Usuario();
         when(usuarioServices.buscar(userId)).thenReturn(usuario);
 
         ResponseEntity<?> response = usuarioController.buscar(userId);
@@ -81,7 +80,7 @@ class UsuarioControllerTest {
     void testCadastrar() {
         UsuarioCriacaoDto usuarioCriacaoDto = new UsuarioCriacaoDto();
 
-        ResponseEntity<Void> response = usuarioController.cadastrar(usuarioCriacaoDto);
+        ResponseEntity<Usuario> response = usuarioController.cadastrar(usuarioCriacaoDto);
 
         assertEquals(201, response.getStatusCodeValue());
     }
@@ -89,7 +88,7 @@ class UsuarioControllerTest {
     @Test
     void testAtualizar() {
         Integer userId = 1;
-        ListaUsuarioAtualizacaoDto usuario = new ListaUsuarioAtualizacaoDto();
+        Usuario usuario = new Usuario();
         when(usuarioServices.atualizar(eq(userId), any(Usuario.class))).thenReturn(usuario);
 
         ResponseEntity<?> response = usuarioController.atualizar(userId, new Usuario());

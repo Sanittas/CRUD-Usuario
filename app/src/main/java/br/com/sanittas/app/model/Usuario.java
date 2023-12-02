@@ -22,7 +22,7 @@ public class Usuario {
     private Integer id; // Identificador único do usuário
     @NotBlank
     private String nome; // Nome do usuário
-    @Pattern(regexp = "\\d{2}\\d{5}\\d{4}", message = "O número de telefone deve estar no formato 11999999999")
+    @Pattern(regexp = "^\\(\\d{2}\\)9\\d{4}-\\d{4}$", message = "O número de telefone deve estar no formato 11999999999")
     private String telefone; // Número de telefone do usuário
     @Email
     private String email; // Endereço de e-mail do usuário

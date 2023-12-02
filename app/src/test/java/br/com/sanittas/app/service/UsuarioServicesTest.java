@@ -53,7 +53,7 @@ class UsuarioServicesTest {
         when(usuarioRepository.findAll()).thenReturn(usuarios);
 
         // Act
-        List<ListaUsuarioDto> listaUsuarios = usuarioServices.listarUsuarios();
+        List<Usuario> listaUsuarios = usuarioServices.listarUsuarios();
 
         // Assert
         assertNotNull(listaUsuarios);
