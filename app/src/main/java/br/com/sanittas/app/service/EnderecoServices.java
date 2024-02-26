@@ -1,6 +1,6 @@
 package br.com.sanittas.app.service;
 
-import br.com.sanittas.app.model.Endereco;
+import br.com.sanittas.app.model.EnderecoUsuario;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.EnderecoRepository;
 import br.com.sanittas.app.repository.UsuarioRepository;
@@ -8,8 +8,6 @@ import br.com.sanittas.app.service.endereco.dto.EnderecoCriacaoDto;
 import br.com.sanittas.app.service.endereco.dto.EnderecoMapper;
 import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -37,14 +35,14 @@ public class EnderecoServices {
             List<ListaEndereco> enderecos = new ArrayList<>();
 
             if (usuario.isPresent()) {
-                for (Endereco endereco : usuario.get().getEnderecos()) {
+                for (EnderecoUsuario enderecoUsuario : usuario.get().getEnderecoUsuarios()) {
                     var enderecoDto = new ListaEndereco(
-                            endereco.getId(),
-                            endereco.getLogradouro(),
-                            endereco.getNumero(),
-                            endereco.getComplemento(),
-                            endereco.getEstado(),
-                            endereco.getCidade()
+                            enderecoUsuario.getId(),
+                            enderecoUsuario.getLogradouro(),
+                            enderecoUsuario.getNumero(),
+                            enderecoUsuario.getComplemento(),
+                            enderecoUsuario.getEstado(),
+                            enderecoUsuario.getCidade()
                     );
                     enderecos.add(enderecoDto);
                 }

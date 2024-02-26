@@ -7,28 +7,27 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Entity(name="Endereco")
-@Table(name = "endereco")
-public class Endereco {
-
+@Entity(name="endereco_usuario")
+public class EnderecoUsuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_end_usuario")
     private Long id;
 
     @ManyToOne
     private Usuario usuario; // Associação muitos para um com a entidade Usuario
 
     @NotBlank
-    private String logradouro; // Nome da rua, avenida, etc.
+    private String logradouro;
 
     @NotBlank
-    private String numero; // Número do endereço
+    private String numero;
 
-    private String complemento; // Informações adicionais (opcional)
-
-    @NotBlank
-    private String estado; // Estado do endereço
+    private String complemento;
 
     @NotBlank
-    private String cidade; // Cidade do endereço
+    private String estado;
+
+    @NotBlank
+    private String cidade;
 }

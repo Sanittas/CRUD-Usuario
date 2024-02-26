@@ -1,15 +1,11 @@
 package br.com.sanittas.app.service;
 
-import br.com.sanittas.app.api.configuration.security.jwt.GerenciadorTokenJwt;
-import br.com.sanittas.app.model.Endereco;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.UsuarioRepository;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
-import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
 import br.com.sanittas.app.service.usuario.dto.*;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
 import org.springframework.security.core.token.SecureRandomFactoryBean;
 import org.springframework.security.core.token.Token;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;

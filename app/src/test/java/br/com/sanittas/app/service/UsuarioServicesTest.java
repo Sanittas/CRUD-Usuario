@@ -2,7 +2,6 @@ package br.com.sanittas.app.service;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import br.com.sanittas.app.api.configuration.security.jwt.GerenciadorTokenJwt;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.UsuarioRepository;
 import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;

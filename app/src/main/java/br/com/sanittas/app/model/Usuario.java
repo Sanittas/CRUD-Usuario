@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import org.hibernate.validator.constraints.br.CPF;
@@ -31,5 +30,5 @@ public class Usuario {
     @NotBlank
     private String senha; // Senha do usuário
     @OneToMany(mappedBy = "usuario", orphanRemoval = true)
-    private List<Endereco> enderecos = new ArrayList<>(); // Lista de endereços associados ao usuário
+    private List<EnderecoUsuario> enderecoUsuarios = new ArrayList<>(); // Lista de endereços associados ao usuário
 }

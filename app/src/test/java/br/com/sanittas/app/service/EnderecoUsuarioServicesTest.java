@@ -1,6 +1,6 @@
 package br.com.sanittas.app.service;
 
-import br.com.sanittas.app.model.Endereco;
+import br.com.sanittas.app.model.EnderecoUsuario;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.EnderecoRepository;
 import br.com.sanittas.app.repository.UsuarioRepository;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class EnderecoServicesTest {
+class EnderecoUsuarioServicesTest {
 
     @Mock
     private EnderecoRepository repository;
@@ -44,16 +44,16 @@ class EnderecoServicesTest {
         Integer userId = 1;
         Usuario usuario = new Usuario();
         usuario.setId(userId);
-        Endereco endereco1 = new Endereco();
-        endereco1.setId(1L);
-        endereco1.setLogradouro("Rua A");
+        EnderecoUsuario enderecoUsuario1 = new EnderecoUsuario();
+        enderecoUsuario1.setId(1L);
+        enderecoUsuario1.setLogradouro("Rua A");
         // ... Initialize other fields
-        Endereco endereco2 = new Endereco();
-        endereco2.setId(2L);
-        endereco2.setLogradouro("Rua B");
+        EnderecoUsuario enderecoUsuario2 = new EnderecoUsuario();
+        enderecoUsuario2.setId(2L);
+        enderecoUsuario2.setLogradouro("Rua B");
         // ... Initialize other fields
 
-        usuario.setEnderecos(List.of(endereco1, endereco2));
+        usuario.setEnderecoUsuarios(List.of(enderecoUsuario1, enderecoUsuario2));
         when(usuarioRepository.findById(userId)).thenReturn(Optional.of(usuario));
 
         // Act
@@ -106,11 +106,11 @@ class EnderecoServicesTest {
         EnderecoCriacaoDto enderecoDto = new EnderecoCriacaoDto();
         // Preencha os dados do DTO de atualização de endereço
 
-        Endereco endereco = new Endereco();
-        endereco.setId(enderecoId);
+        EnderecoUsuario enderecoUsuario = new EnderecoUsuario();
+        enderecoUsuario.setId(enderecoId);
         // Defina outros campos do endereço
 
-        when(repository.findById(enderecoId)).thenReturn(Optional.of(endereco));
+        when(repository.findById(enderecoId)).thenReturn(Optional.of(enderecoUsuario));
 
         // Act
         ListaEndereco result = enderecoServices.atualizar(enderecoDto, enderecoId);
