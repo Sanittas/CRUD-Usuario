@@ -32,15 +32,6 @@ public class UsuarioServices {
     @Autowired
     private UsuarioRepository repository;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    private GerenciadorTokenJwt gerenciadorTokenJwt;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
     public List<Usuario> listarUsuarios() {
         log.info("Listando usuários");
         var usuarios = repository.findAll();
@@ -60,36 +51,8 @@ public class UsuarioServices {
             log.error("CPF já cadastrado!");
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
-
-        String senhaCriptografada = passwordEncoder.encode(novoUsuario.getSenha());
-        novoUsuario.setSenha(senhaCriptografada);
-
+        novoUsuario.setSenha(usuarioCriacaoDto.getSenha());
         return repository.save(novoUsuario);
-    }
-
-    public UsuarioTokenDto autenticar(UsuarioLoginDto usuarioLoginDto) {
-        try {
-            log.info("Autenticando usuário");
-
-            final UsernamePasswordAuthenticationToken credentials = new UsernamePasswordAuthenticationToken(
-                    usuarioLoginDto.getEmail(), usuarioLoginDto.getSenha());
-
-            final Authentication authentication = this.authenticationManager.authenticate(credentials);
-
-            Usuario usuarioAutenticado =
-                    repository.findByEmail(usuarioLoginDto.getEmail())
-                            .orElseThrow(() ->
-                                    new ResponseStatusException(404, "Email do usuário não cadastrado", null));
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            final String jwtToken = gerenciadorTokenJwt.generateToken(authentication);
-
-            return UsuarioMapper.of(usuarioAutenticado, jwtToken);
-        } catch (ResponseStatusException e) {
-            log.error("Erro ao autenticar usuário: {}", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
     }
 
     public Usuario atualizar(Integer id, Usuario dados) {
@@ -169,7 +132,7 @@ public class UsuarioServices {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
         }
 
-        usuario.setSenha(this.passwordEncoder.encode(novaSenhaDto.getNovaSenha()));
+        usuario.setSenha(novaSenhaDto.getNovaSenha());
         repository.save(usuario);
     }
 

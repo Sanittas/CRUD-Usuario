@@ -29,18 +29,6 @@ public class UsuarioController {
     private EmailServices emailServices; // Serviços relacionados a e-mails
 
     /**
-     * Autentica um usuário e retorna um token JWT.
-     *
-     * @param usuarioLoginDto DTO contendo as informações de login do usuário.
-     * @return Uma ResponseEntity contendo o token de autenticação ou uma resposta de falha.
-     */
-    @PostMapping("/login")
-    public ResponseEntity<UsuarioTokenDto> login(@RequestBody UsuarioLoginDto usuarioLoginDto) {
-        UsuarioTokenDto usuarioTokenDto = services.autenticar(usuarioLoginDto);
-        return ResponseEntity.status(200).body(usuarioTokenDto);
-    }
-
-    /**
      * Lista todos os usuários.
      *
      * @return Uma ResponseEntity contendo a lista de usuários ou uma resposta vazia.
