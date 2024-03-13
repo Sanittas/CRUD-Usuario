@@ -2,21 +2,11 @@ package br.com.sanittas.app.service;
 
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.UsuarioRepository;
-import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
-import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
 import br.com.sanittas.app.service.usuario.dto.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.token.KeyBasedPersistenceTokenService;
-import org.springframework.security.core.token.SecureRandomFactoryBean;
-import org.springframework.security.core.token.Token;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -83,20 +73,20 @@ public class UsuarioServices {
         return usuario;
     }
 
-    public String generateToken(String email) {
-        log.info("Gerando token para o email: {}", email);
-
-        Usuario usuario = repository.findByEmail(email)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        try {
-            KeyBasedPersistenceTokenService tokenService = getInstanceFor(usuario);
-            Token token = tokenService.allocateToken(usuario.getEmail());
-            return token.getKey();
-        } catch (Exception e) {
-            log.error("Erro ao gerar token", e);
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-        }
-    }
+//    public String generateToken(String email) {
+//        log.info("Gerando token para o email: {}", email);
+//
+//        Usuario usuario = repository.findByEmail(email)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+//        try {
+//            KeyBasedPersistenceTokenService tokenService = getInstanceFor(usuario);
+//            Token token = tokenService.allocateToken(usuario.getEmail());
+//            return token.getKey();
+//        } catch (Exception e) {
+//            log.error("Erro ao gerar token", e);
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+//        }
+//    }
 
     public void validarToken(String token) {
 
@@ -124,14 +114,13 @@ public class UsuarioServices {
         if (usuario.getSenha().equals(novaSenhaDto)) {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
-        try {
-            KeyBasedPersistenceTokenService tokenService = this.getInstanceFor(usuario);
-            tokenService.verifyToken(novaSenhaDto.getToken());
-        } catch (Exception e) {
-            log.error("Token inválido");
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-
+//        try {
+//            KeyBasedPersistenceTokenService tokenService = this.getInstanceFor(usuario);
+//            tokenService.verifyToken(novaSenhaDto.getToken());
+//        } catch (Exception e) {
+//            log.error("Token inválido");
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+//        }
         usuario.setSenha(novaSenhaDto.getNovaSenha());
         repository.save(usuario);
     }
@@ -142,13 +131,13 @@ public class UsuarioServices {
         return createdAt.plus(Duration.ofMinutes(5)).isBefore(now);
     }
 
-    private KeyBasedPersistenceTokenService getInstanceFor(Usuario usuario) throws Exception {
-        KeyBasedPersistenceTokenService tokenService = new KeyBasedPersistenceTokenService();
-        tokenService.setServerSecret(usuario.getSenha());
-        tokenService.setServerInteger(16);
-        tokenService.setSecureRandom(new SecureRandomFactoryBean().getObject());
-        return tokenService;
-    }
+//    private KeyBasedPersistenceTokenService getInstanceFor(Usuario usuario) throws Exception {
+//        KeyBasedPersistenceTokenService tokenService = new KeyBasedPersistenceTokenService();
+//        tokenService.setServerSecret(usuario.getSenha());
+//        tokenService.setServerInteger(16);
+//        tokenService.setSecureRandom(new SecureRandomFactoryBean().getObject());
+//        return tokenService;
+//    }
 
     private PasswordTokenPublicData readPublicData(String rawToken) {
         String rawTokenDecoded = new String(Base64.getDecoder().decode(rawToken));

@@ -77,7 +77,7 @@ public class EnderecoServices {
         }
     }
 
-    public ListaEndereco atualizar(EnderecoCriacaoDto enderecoCriacaoDto, Long id) {
+    public ListaEndereco atualizar(EnderecoCriacaoDto enderecoCriacaoDto, Integer id) {
         try {
             log.info("Atualizando endereço com ID: {}", id);
             var endereco = repository.findById(id);
@@ -107,7 +107,7 @@ public class EnderecoServices {
         }
     }
 
-    public void deletarEndereco(Long id) {
+    public void deletarEndereco(Integer id) {
         try {
             log.info("Deletando endereço com ID: {}", id);
 

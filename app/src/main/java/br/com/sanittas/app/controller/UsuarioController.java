@@ -3,8 +3,6 @@ package br.com.sanittas.app.controller;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.service.EmailServices;
 import br.com.sanittas.app.service.UsuarioServices;
-import br.com.sanittas.app.service.autenticacao.dto.UsuarioLoginDto;
-import br.com.sanittas.app.service.autenticacao.dto.UsuarioTokenDto;
 import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
 import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -18,7 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@SecurityRequirement(name = "bearer-key") // Requisito de segurança para autenticação JWT
 @RequestMapping("/usuarios")
 @Slf4j
 public class UsuarioController {
@@ -101,17 +98,17 @@ public class UsuarioController {
      * @param email O endereço de e-mail do usuário.
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
-    @PostMapping("/esqueci-senha")
-    public ResponseEntity<Void> esqueciASenha(@RequestParam String email) {
-        try {
-            String token = services.generateToken(email);
-            emailServices.enviarEmailComToken(email, token);
-            return ResponseEntity.status(200).build();
-        } catch (ResponseStatusException e) {
-            log.info(e.getLocalizedMessage());
-            throw new ResponseStatusException(e.getStatusCode());
-        }
-    }
+//    @PostMapping("/esqueci-senha")
+//    public ResponseEntity<Void> esqueciASenha(@RequestParam String email) {
+//        try {
+////            String token = services.generateToken(email);
+////            emailServices.enviarEmailComToken(email, token);
+//            return ResponseEntity.status(200).build();
+//        } catch (ResponseStatusException e) {
+//            log.info(e.getLocalizedMessage());
+//            throw new ResponseStatusException(e.getStatusCode());
+//        }
+//    }
 
     /**
      * Valida um token para redefinição de senha.

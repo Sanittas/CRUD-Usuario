@@ -12,8 +12,7 @@ public class EnderecoUsuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_end_usuario")
-    private Long id;
-
+    private Integer id;
     @ManyToOne
     private Usuario usuario; // Associação muitos para um com a entidade Usuario
 

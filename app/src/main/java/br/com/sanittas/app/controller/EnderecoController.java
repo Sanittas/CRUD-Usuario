@@ -4,6 +4,7 @@ import br.com.sanittas.app.service.EnderecoServices;
 import br.com.sanittas.app.service.endereco.dto.EnderecoCriacaoDto;
 import br.com.sanittas.app.service.endereco.dto.ListaEndereco;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.AllArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,15 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@SecurityRequirement(name = "bearer-key") // Requisito de segurança para autenticação JWT
 @RequestMapping("/enderecos")
 @Setter
+@AllArgsConstructor
 public class EnderecoController {
-
-    @Autowired
-    private EnderecoServices usuarioServices; // Serviço de endereços por usuário
-    @Autowired
-    private EnderecoServices enderecoServices; // Serviço de endereços
+    private final EnderecoServices usuarioServices; // Serviço de endereços por usuário
+    private final EnderecoServices enderecoServices; // Serviço de endereços
 
     /**
      * Obtém uma lista de endereços associados a um usuário.
@@ -68,7 +66,7 @@ public class EnderecoController {
      * @return Uma ResponseEntity contendo o endereço atualizado ou uma resposta de falha.
      */
     @PutMapping("/usuarios/{id}")
-    public ResponseEntity<ListaEndereco> atualizarEndereco(@RequestBody EnderecoCriacaoDto enderecoCriacaoDto, @PathVariable Long id) {
+    public ResponseEntity<ListaEndereco> atualizarEndereco(@RequestBody EnderecoCriacaoDto enderecoCriacaoDto, @PathVariable Integer id) {
         try {
             var endereco = enderecoServices.atualizar(enderecoCriacaoDto, id);
             return ResponseEntity.status(200).body(endereco);
@@ -85,7 +83,7 @@ public class EnderecoController {
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
     @DeleteMapping("/usuarios/{id}")
-    public ResponseEntity<Void> deletarEnderecoUsuario(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarEnderecoUsuario(@PathVariable Integer id) {
         try {
             enderecoServices.deletarEndereco(id);
             return ResponseEntity.status(200).build(); // Ok

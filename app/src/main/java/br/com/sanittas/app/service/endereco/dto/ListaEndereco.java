@@ -17,7 +17,7 @@ public class ListaEndereco {
         /**
          * Identificador único do endereço.
          */
-        private Long id;
+        private Integer id;
 
         /**
          * Logradouro do endereço.
