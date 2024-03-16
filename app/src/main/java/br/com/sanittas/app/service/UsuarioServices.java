@@ -2,12 +2,14 @@ package br.com.sanittas.app.service;
 
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.UsuarioRepository;
+import br.com.sanittas.app.service.dto.LoginDtoRequest;
 import br.com.sanittas.app.service.usuario.dto.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
@@ -145,5 +147,9 @@ public class UsuarioServices {
         Long timestamp = Long.parseLong(tokenParts[0]);
         String email = tokenParts[2];
         return new PasswordTokenPublicData(email, timestamp);
+    }
+
+    public Usuario login(LoginDtoRequest loginDto) {
+        return repository.findByEmail(loginDto.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }

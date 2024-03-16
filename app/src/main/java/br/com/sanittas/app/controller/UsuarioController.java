@@ -3,6 +3,8 @@ package br.com.sanittas.app.controller;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.service.EmailServices;
 import br.com.sanittas.app.service.UsuarioServices;
+import br.com.sanittas.app.service.dto.LoginDtoRequest;
+import br.com.sanittas.app.service.dto.LoginDtoResponse;
 import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
 import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -25,6 +27,18 @@ public class UsuarioController {
     @Autowired
     private EmailServices emailServices; // Serviços relacionados a e-mails
 
+
+    public ResponseEntity<LoginDtoResponse> login(@RequestBody @Valid LoginDtoRequest loginDto) {
+        try {
+            log.info("Recebida solicitação de login para usuário com e-mail: {}", loginDto.email());
+            Usuario usuario = services.login(loginDto);
+            log.info("Login efetuado com sucesso para usuário: {}", usuario.getNome());
+            return ResponseEntity.status(200).body(new LoginDtoResponse(usuario.getId(), usuario.getNome()));
+        } catch (ResponseStatusException e) {
+            log.error("Erro ao efetuar login: {}", e.getMessage());
+            throw new ResponseStatusException(e.getStatusCode());
+        }
+    }
     /**
      * Lista todos os usuários.
      *
