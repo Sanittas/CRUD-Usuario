@@ -16,6 +16,7 @@ import java.util.List;
 @RequestMapping("/enderecos")
 @Setter
 @AllArgsConstructor
+@CrossOrigin(origins = "*")
 public class EnderecoController {
     private final EnderecoServices usuarioServices; // Serviço de endereços por usuário
     private final EnderecoServices enderecoServices; // Serviço de endereços

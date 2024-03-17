@@ -20,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/usuarios")
 @Slf4j
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired
@@ -27,13 +28,13 @@ public class UsuarioController {
     @Autowired
     private EmailServices emailServices; // Serviços relacionados a e-mails
 
-
+    @PostMapping("/login")
     public ResponseEntity<LoginDtoResponse> login(@RequestBody @Valid LoginDtoRequest loginDto) {
         try {
             log.info("Recebida solicitação de login para usuário com e-mail: {}", loginDto.email());
             Usuario usuario = services.login(loginDto);
             log.info("Login efetuado com sucesso para usuário: {}", usuario.getNome());
-            return ResponseEntity.status(200).body(new LoginDtoResponse(usuario.getId(), usuario.getNome()));
+            return ResponseEntity.status(200).body(new LoginDtoResponse(usuario.getNome(), usuario.getId(), usuario.getEmail()));
         } catch (ResponseStatusException e) {
             log.error("Erro ao efetuar login: {}", e.getMessage());
             throw new ResponseStatusException(e.getStatusCode());
