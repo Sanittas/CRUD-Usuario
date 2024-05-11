@@ -173,4 +173,14 @@ public class UsuarioController {
             throw new ResponseStatusException(e.getStatusCode());
         }
     }
+
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Usuario> buscarPorEmail(@PathVariable String email) {
+        try {
+            Usuario usuario = services.buscarPorEmail(email);
+            return ResponseEntity.status(200).body(usuario);
+        } catch (ResponseStatusException e) {
+            throw new ResponseStatusException(e.getStatusCode());
+        }
+    }
 }

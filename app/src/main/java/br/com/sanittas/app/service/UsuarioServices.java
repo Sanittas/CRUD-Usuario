@@ -156,4 +156,8 @@ public class UsuarioServices {
     public Usuario login(LoginDtoRequest loginDto) {
         return repository.findByEmail(loginDto.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
+
+    public Usuario buscarPorEmail(String email) {
+        return repository.findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
 }
