@@ -3,18 +3,22 @@ package br.com.sanittas.app.service;
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.UsuarioRepository;
 import br.com.sanittas.app.service.dto.LoginDtoRequest;
-import br.com.sanittas.app.service.usuario.dto.*;
+import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
+import br.com.sanittas.app.service.usuario.dto.PasswordTokenPublicData;
+import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
+import br.com.sanittas.app.service.usuario.dto.UsuarioMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Slf4j
