@@ -18,7 +18,6 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/usuarios")
 @Slf4j
 @CrossOrigin(origins = "*")
 public class UsuarioController {

@@ -16,7 +16,6 @@ import java.util.List;
 @RequestMapping("/enderecos")
 @Setter
 @AllArgsConstructor
-@CrossOrigin(origins = "*")
 public class EnderecoController {
     private final EnderecoServices usuarioServices; // Serviço de endereços por usuário
     private final EnderecoServices enderecoServices; // Serviço de endereços
@@ -27,7 +26,7 @@ public class EnderecoController {
      * @param id_usuario O ID do usuário.
      * @return Uma ResponseEntity contendo a lista de endereços ou uma resposta vazia.
      */
-    @GetMapping("/usuarios/{id_usuario}")
+    @GetMapping("/{id_usuario}")
     public ResponseEntity<List<ListaEndereco>> listarEnderecosPorUsuario(@PathVariable Integer id_usuario) {
         try {
             var response = usuarioServices.listarEnderecosPorUsuario(id_usuario);
@@ -48,7 +47,7 @@ public class EnderecoController {
      * @param usuario_id   O ID do usuário.
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
-    @PostMapping("/usuarios/{usuario_id}")
+    @PostMapping("/{usuario_id}")
     public ResponseEntity<Void> cadastrarEnderecoUsuario(@RequestBody EnderecoCriacaoDto endereco, @PathVariable Integer usuario_id) {
         try {
             enderecoServices.cadastrarEnderecoUsuario(endereco, usuario_id);
@@ -66,7 +65,7 @@ public class EnderecoController {
      * @param id                 O ID do endereço a ser atualizado.
      * @return Uma ResponseEntity contendo o endereço atualizado ou uma resposta de falha.
      */
-    @PutMapping("/usuarios/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ListaEndereco> atualizarEndereco(@RequestBody EnderecoCriacaoDto enderecoCriacaoDto, @PathVariable Integer id) {
         try {
             var endereco = enderecoServices.atualizar(enderecoCriacaoDto, id);
@@ -83,7 +82,7 @@ public class EnderecoController {
      * @param id O ID do endereço a ser deletado.
      * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
      */
-    @DeleteMapping("/usuarios/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletarEnderecoUsuario(@PathVariable Integer id) {
         try {
             enderecoServices.deletarEndereco(id);
