@@ -1,7 +1,7 @@
 FROM maven:3.8.5-openjdk-17-slim AS builder
 
 WORKDIR /build
-COPY /app /build
+COPY . /build
 
 RUN mvn clean package -DskipTests -Dspring.profiles.active=swagger
 
