@@ -19,7 +19,6 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     @Autowired
@@ -27,18 +26,6 @@ public class UsuarioController {
     @Autowired
     private EmailServices emailServices; // Serviços relacionados a e-mails
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginDtoResponse> login(@RequestBody @Valid LoginDtoRequest loginDto) {
-        try {
-            log.info("Recebida solicitação de login para usuário com e-mail: {}", loginDto.email());
-            Usuario usuario = services.login(loginDto);
-            log.info("Login efetuado com sucesso para usuário: {}", usuario.getNome());
-            return ResponseEntity.status(200).body(new LoginDtoResponse(usuario.getNome(), usuario.getId(), usuario.getEmail()));
-        } catch (ResponseStatusException e) {
-            log.error("Erro ao efetuar login: {}", e.getMessage());
-            throw new ResponseStatusException(e.getStatusCode());
-        }
-    }
     /**
      * Lista todos os usuários.
      *
@@ -68,22 +55,6 @@ public class UsuarioController {
         try {
             Usuario usuario = services.buscar(id);
             return ResponseEntity.status(200).body(usuario);
-        } catch (ResponseStatusException e) {
-            throw new ResponseStatusException(e.getStatusCode());
-        }
-    }
-
-    /**
-     * Cadastra um novo usuário.
-     *
-     * @param dados O DTO contendo as informações do novo usuário.
-     * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
-     */
-    @PostMapping("/cadastrar/")
-    public ResponseEntity<Usuario> cadastrar(@RequestBody @Valid UsuarioCriacaoDto dados) {
-        try {
-            Usuario response = services.cadastrar(dados);
-            return ResponseEntity.status(201).body(response); // Criado com sucesso
         } catch (ResponseStatusException e) {
             throw new ResponseStatusException(e.getStatusCode());
         }
