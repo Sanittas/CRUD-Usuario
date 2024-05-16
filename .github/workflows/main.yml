@@ -1,0 +1,25 @@
+name: ci-cd
+
+on:
+  pull_request:
+    branches: 
+    - main
+    - develop
+    types: [ opened, reopened]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with: 
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Build with maven
+        run: mvn -B package --file pom.xml
+      - name: Build the docker image
+        run: docker build -t ogabrielsantoos/backend:service-usuarios .
+      - name: push no docker hub
+        run: docker push ogabrielsantoos/backend:service-usuarios . 
