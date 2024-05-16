@@ -14,12 +14,8 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: entrar no caminho app
-        run: cd app/
       - name: Build with maven
         run: mvn -B package --file app/pom.xml
-      - name: sair do diretorio app
-        run: cd ..
       - name: Build the docker image
         run: docker build -t ogabrielsantoos/backend:service-usuarios .
       - name: Log in docker hub
