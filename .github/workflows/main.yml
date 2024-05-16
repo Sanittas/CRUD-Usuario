@@ -15,6 +15,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with maven
+        run: cd app
         run: mvn -B package --file app/pom.xml
       - name: Build the docker image
         run: docker build -t ogabrielsantoos/backend:service-usuarios .
