@@ -1,13 +1,8 @@
 package br.com.sanittas.app.controller;
 
 import br.com.sanittas.app.model.Usuario;
-import br.com.sanittas.app.service.EmailServices;
 import br.com.sanittas.app.service.UsuarioServices;
-import br.com.sanittas.app.service.dto.LoginDtoRequest;
-import br.com.sanittas.app.service.dto.LoginDtoResponse;
 import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
-import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +18,6 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioServices services; // Serviços relacionados a usuários
-    @Autowired
-    private EmailServices emailServices; // Serviços relacionados a e-mails
 
     /**
      * Lista todos os usuários.
@@ -77,12 +70,6 @@ public class UsuarioController {
         }
     }
 
-    /**
-     * Envia um e-mail com um token para redefinição de senha.
-     *
-     * @param email O endereço de e-mail do usuário.
-     * @return Uma ResponseEntity indicando o sucesso ou falha da operação.
-     */
 //    @PostMapping("/esqueci-senha")
 //    public ResponseEntity<Void> esqueciASenha(@RequestParam String email) {
 //        try {

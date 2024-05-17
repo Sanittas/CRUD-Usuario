@@ -2,15 +2,12 @@ package br.com.sanittas.app.service;
 
 import br.com.sanittas.app.model.Usuario;
 import br.com.sanittas.app.repository.UsuarioRepository;
-import br.com.sanittas.app.service.dto.LoginDtoRequest;
 import br.com.sanittas.app.service.usuario.dto.NovaSenhaDto;
 import br.com.sanittas.app.service.usuario.dto.PasswordTokenPublicData;
-import br.com.sanittas.app.service.usuario.dto.UsuarioCriacaoDto;
-import br.com.sanittas.app.service.usuario.dto.UsuarioMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -24,31 +21,13 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class UsuarioServices {
-
-    @Autowired
-    private UsuarioRepository repository;
+    private final UsuarioRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<Usuario> listarUsuarios() {
         log.info("Listando usuários");
         var usuarios = repository.findAll();
         return usuarios;
-    }
-
-    public Usuario cadastrar(UsuarioCriacaoDto usuarioCriacaoDto) {
-        log.info("Cadastrando novo usuário");
-
-        final Usuario novoUsuario = UsuarioMapper.of(usuarioCriacaoDto);
-
-        if (repository.existsByEmail(novoUsuario.getEmail())) {
-            log.error("Email já cadastrado!");
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
-        if (repository.existsByCpf(novoUsuario.getCpf())) {
-            log.error("CPF já cadastrado!");
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
-        }
-        novoUsuario.setSenha(usuarioCriacaoDto.getSenha());
-        return repository.save(novoUsuario);
     }
 
     public Usuario atualizar(Integer id, Usuario dados) {
@@ -58,7 +37,7 @@ public class UsuarioServices {
         usuario.setNome(dados.getNome());
         usuario.setEmail(dados.getEmail());
         usuario.setCpf(dados.getCpf());
-        usuario.setSenha(dados.getSenha());
+        usuario.setSenha(passwordEncoder.encode(dados.getSenha()));
         usuario.setTelefone(dados.getTelefone());
         return repository.save(usuario);
     }
@@ -151,10 +130,6 @@ public class UsuarioServices {
         Long timestamp = Long.parseLong(tokenParts[0]);
         String email = tokenParts[2];
         return new PasswordTokenPublicData(email, timestamp);
-    }
-
-    public Usuario login(LoginDtoRequest loginDto) {
-        return repository.findByEmail(loginDto.email()).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public Usuario buscarPorEmail(String email) {
