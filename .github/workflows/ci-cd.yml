@@ -1,11 +1,36 @@
-name: cd
+name: ci
 
 on:
   push:
     branches: [ main ]
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+      - name: Testes
+        run: mvn clean test -Ptest
+      - name: Build
+        run: mvn clean package -Pprod
+      - name: Build the docker image
+        run: docker build -t ogabrielsantoos/backend:service-usuarios .
+      - name: Log in docker hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: push no docker hub
+        run: docker push ogabrielsantoos/backend:service-usuarios
   deploy_instance_1:
+    needs: build
     runs-on: [ self-hosted, usuarios_1 ]
     steps:
       - name: Pull Docker image
@@ -18,6 +43,7 @@ jobs:
         run: docker run --name usuarios -d -p 8080:8080 ogabrielsantoos/backend:service-usuarios
   deploy_instance_2:
     runs-on: [ self-hosted, usuarios_1 ]
+    needs: build
     steps:
       - name: Pull Docker image
         run: docker pull ogabrielsantoos/backend:service-usuarios
@@ -27,5 +53,3 @@ jobs:
         run: docker rm usuarios || true
       - name: Run Docker Container
         run: docker run --name usuarios -d -p 8080:8080 ogabrielsantoos/backend:service-usuarios
-
-
