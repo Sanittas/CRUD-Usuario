@@ -1,4 +1,4 @@
-name: ci-cd
+name: ci
 
 on:
   push:
@@ -16,8 +16,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
-      - name: Build with maven
-        run: mvn -B package --file pom.xml
+      - name: Testes
+        run: mvn clean test -Ptest
+      - name: Build
+        run: mvn clean package -Pprod
       - name: Build the docker image
         run: docker build -t ogabrielsantoos/backend:service-usuarios .
       - name: Log in docker hub
