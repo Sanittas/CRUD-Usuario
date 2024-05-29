@@ -31,7 +31,7 @@ jobs:
         run: docker push ogabrielsantoos/backend:service-usuarios
   deploy_instance_1:
     needs: build
-    runs-on: [ self-hosted, usuarios_1 ]
+    runs-on: [ self-hosted, usuario_1 ]
     steps:
       - name: Pull Docker image
         run: docker pull ogabrielsantoos/backend:service-usuarios
@@ -42,7 +42,7 @@ jobs:
       - name: Run Docker Container
         run: docker run --name usuarios -d -p 8080:8080 ogabrielsantoos/backend:service-usuarios
   deploy_instance_2:
-    runs-on: [ self-hosted, usuarios_1 ]
+    runs-on: [ self-hosted, usuarios_2 ]
     needs: build
     steps:
       - name: Pull Docker image
