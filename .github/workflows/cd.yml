@@ -5,8 +5,8 @@ on:
     branches: [ main ]
 
 jobs:
-  deploy:
-    runs-on: self-hosted
+  deploy_instance_1:
+    runs-on: [ self-hosted, usuarios_1 ]
     steps:
       - name: Pull Docker image
         run: docker pull ogabrielsantoos/backend:service-usuarios
@@ -16,4 +16,16 @@ jobs:
         run: docker rm usuarios || true
       - name: Run Docker Container
         run: docker run --name usuarios -d -p 8080:8080 ogabrielsantoos/backend:service-usuarios
+  deploy_instance_2:
+    runs-on: [ self-hosted, usuarios_1 ]
+    steps:
+      - name: Pull Docker image
+        run: docker pull ogabrielsantoos/backend:service-usuarios
+      - name: Stop Docker Container
+        run: docker stop usuarios || true
+      - name: Remover container
+        run: docker rm usuarios || true
+      - name: Run Docker Container
+        run: docker run --name usuarios -d -p 8080:8080 ogabrielsantoos/backend:service-usuarios
+
 
